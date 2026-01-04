@@ -13,7 +13,7 @@ A self-hostable Discord bot for managing Cursor Cloud Agents directly from Disco
 - ⏸️ **Control** - Stop or delete agents as needed
 - 🔍 **Discover** - List available models and accessible repositories
 - 🔐 **Secure** - Discord native permissions, self-hosted on your infrastructure
-- 👻 **Privacy Mode** - Optional private deployment mode (404 homepage, no indexing)
+- 🔒 **Private** - Returns 404 on homepage, blocks search engines by default
 
 ## Quick Start
 
@@ -71,7 +71,6 @@ Click the "Deploy with Vercel" button above, then:
    - `DISCORD_APPLICATION_ID`
    - `DISCORD_BOT_TOKEN`
    - `DISCORD_PUBLIC_KEY`
-   - `PRIVATE_MODE` (optional - set to `true` for private deployment, `false` or omit for public)
 4. Click "Deploy"
 5. Copy your deployment URL (e.g., `https://your-bot.vercel.app`)
 
@@ -203,51 +202,15 @@ Fix the login button issue
 
 💡 **Tip:** This works for both `/agent create` and `/agent followup` commands!
 
-## Privacy Mode
-
-For personal/private deployments, you can enable **Privacy Mode** to make your bot deployment completely hidden:
-
-### What is Privacy Mode?
-
-When `PRIVATE_MODE=true` is set:
-- ✅ Homepage returns **404** (no landing page visible)
-- ✅ **robots.txt** blocks all search engine crawlers
-- ✅ **Security headers** prevent embedding and indexing
-- ✅ **Referrer policy** prevents URL leaking
-- ✅ Deployment is **not discoverable** via search engines
-
-### How to Enable
-
-**In Vercel Dashboard:**
-1. Go to your project → Settings → Environment Variables
-2. Add: `PRIVATE_MODE` = `true`
-3. Redeploy your project
-
-**In .env.local (for local testing):**
-```bash
-PRIVATE_MODE=true
-```
-
-### Public vs Private Mode
-
-| Feature | Public Mode (default) | Private Mode |
-|---------|----------------------|--------------|
-| Homepage | ✅ Shows landing page | ❌ Returns 404 |
-| Search Engines | ✅ Can index | ❌ Blocked |
-| Discovery | ✅ Findable | ❌ Hidden |
-| Security Headers | ⚠️ Basic | ✅ Strict |
-| Use Case | Demo/public bots | Personal deployments |
-
-**💡 Tip:** Use Private Mode if you want your deployment URL to remain completely hidden and undiscoverable.
-
 ## Architecture
 
-This is a **self-hosted** solution:
+This is a **private, self-hosted** solution:
 
 - Each Discord server admin deploys their own instance
 - Uses their own Cursor API token
 - Independent rate limits and quotas
 - Full control over data and configuration
+- **Privacy by default** - Homepage returns 404, search engines blocked
 
 **Tech Stack:**
 - Next.js 15 (App Router)
@@ -256,6 +219,12 @@ This is a **self-hosted** solution:
 - Cursor Cloud Agents API
 - Vercel Serverless Functions
 
+**Privacy Features (Built-in):**
+- Homepage returns 404 (no information disclosure)
+- `robots.txt` blocks all search engine crawlers
+- Security headers prevent embedding, MIME sniffing, and info leaks
+- Only `/api/discord` endpoint is functional (protected by Discord signatures)
+
 ## Resources
 
 - 🔧 [Cursor API Documentation](https://cursor.com/docs/cloud-agent/api/endpoints)
@@ -263,10 +232,12 @@ This is a **self-hosted** solution:
 
 ## Security
 
-- Discord native permission system
-- Ed25519 signature verification
-- Environment variable secrets
-- No data persistence (stateless)
+- **Discord Ed25519 signature verification** - Cryptographically secure authentication
+- **Discord native permission system** - Role-based access control
+- **Environment variable secrets** - No credentials in code
+- **No data persistence** - Stateless architecture
+- **Privacy by default** - 404 homepage, blocked search indexing
+- **Security headers** - Prevents embedding, MIME sniffing, and info leaks
 
 ## Troubleshooting
 

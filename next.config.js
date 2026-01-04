@@ -7,13 +7,6 @@ const nextConfig = {
     ignoreBuildErrors: false,
   },
   async headers() {
-    // Only apply strict privacy headers if PRIVATE_MODE is enabled
-    const isPrivateMode = process.env.PRIVATE_MODE === 'true';
-    
-    if (!isPrivateMode) {
-      return []; // No special headers in public mode
-    }
-
     return [
       {
         source: '/:path*',
