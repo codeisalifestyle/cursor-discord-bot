@@ -1,5 +1,8 @@
 import { notFound } from 'next/navigation';
 
+// Force dynamic rendering to check env variables
+export const dynamic = 'force-dynamic';
+
 export default function Home() {
   // Privacy mode: If PRIVATE_MODE is enabled, return 404
   if (process.env.PRIVATE_MODE === 'true') {
