@@ -1,0 +1,6 @@
+# Robots.txt - Only applies if PRIVATE_MODE=true
+# For private deployments: Blocks all search engine indexing
+# For public deployments: This file is ignored
+User-agent: *
+Disallow: /
+
