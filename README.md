@@ -1,93 +1,148 @@
 # Cursor Discord Bot
 
-A self-hostable Discord bot for managing Cursor Cloud Agents directly from Discord. Control your AI coding agents with slash commands.
+A self-hostable Discord bot for managing **Cursor Cloud Agents** directly from Discord. Launch, monitor, and control your AI coding agents with simple slash commands.
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fcodeisalifestyle%2Fcursor-discord-bot&env=DISCORD_PUBLIC_KEY,DISCORD_APPLICATION_ID,DISCORD_BOT_TOKEN,CURSOR_API_TOKEN&envDescription=Required%20API%20keys%20for%20Discord%20and%20Cursor&envLink=https%3A%2F%2Fgithub.com%2Fcodeisalifestyle%2Fcursor-discord-bot%2Fblob%2Fmain%2Fdocs%2FSETUP_GUIDE.md&project-name=cursor-discord-bot&repository-name=cursor-discord-bot)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fcodeisalifestyle%2Fcursor-discord-bot&env=DISCORD_PUBLIC_KEY,DISCORD_APPLICATION_ID,DISCORD_BOT_TOKEN,CURSOR_API_TOKEN&envDescription=Required%20API%20keys%20for%20Discord%20and%20Cursor&envLink=https%3A%2F%2Fgithub.com%2Fcodeisalifestyle%2Fcursor-discord-bot%23environment-variables&project-name=cursor-discord-bot&repository-name=cursor-discord-bot)
+
+---
 
 ## Features
 
-- 🤖 **Launch Agents** - Create new Cursor Cloud Agents with custom prompts
-- 📋 **Manage Agents** - List, view status, and monitor your agents
-- 💬 **Conversation History** - View full agent conversation logs
-- 🔄 **Follow-up Instructions** - Add additional tasks to running agents
-- ⏸️ **Control** - Stop or delete agents as needed
-- 🔍 **Discover** - List available models and accessible repositories
-- 🔐 **Secure** - Discord native permissions, self-hosted on your infrastructure
-- 🔒 **Private** - Returns 404 on homepage, blocks search engines by default
+| Feature | Description |
+|---------|-------------|
+| 🚀 **Launch Agents** | Create new Cursor Cloud Agents with custom prompts |
+| 📋 **Manage Agents** | List, view status, and monitor your agents |
+| 💬 **Conversation History** | View full agent conversation logs |
+| 🔄 **Follow-up Instructions** | Add additional tasks to running agents |
+| ⏸️ **Control** | Stop or delete agents as needed |
+| 🔍 **Discover** | List available models and accessible repositories |
+| 🔐 **Self-Hosted** | Deploy on your own infrastructure |
+| 🔒 **Private by Default** | 404 homepage, search engines blocked |
 
-## Quick Start
+---
+
+## Table of Contents
+
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Step 1: Prepare Your Cursor Account](#step-1-prepare-your-cursor-account)
+  - [Step 2: Get Your API Keys](#step-2-get-your-api-keys)
+  - [Step 3: Deploy to Vercel](#step-3-deploy-to-vercel)
+  - [Step 4: Configure Discord Interactions](#step-4-configure-discord-interactions)
+  - [Step 5: Register Commands](#step-5-register-commands)
+  - [Step 6: Invite the Bot](#step-6-invite-the-bot)
+  - [Step 7: Test It Out](#step-7-test-it-out)
+- [Usage](#usage)
+  - [Command Reference](#command-reference)
+  - [Examples](#examples)
+  - [Channel Context](#channel-context)
+  - [Permissions](#permissions)
+- [Environment Variables](#environment-variables)
+- [Local Development](#local-development)
+- [Architecture](#architecture)
+- [Troubleshooting](#troubleshooting)
+- [Contributing](#contributing)
+- [License](#license)
+
+---
+
+## Getting Started
+
+**⏱️ Setup time: ~10 minutes**
 
 ### Prerequisites
 
-- **Cursor Account** with API access ([cursor.com](https://cursor.com))
-- **Discord Server** with admin permissions
-- **Vercel Account** (free tier works)
-- **GitHub Account** (for deployment)
+Before you begin, ensure you have:
 
-### Cursor Preparation
+- ✅ **Cursor Account** with API access at [cursor.com](https://cursor.com)
+- ✅ **Discord Server** where you have admin permissions
+- ✅ **Vercel Account** (free tier works fine)
+- ✅ **GitHub Account** (for forking and deployment)
+- ✅ **Node.js 18+** (for registering commands locally)
 
-Before getting your API token, ensure your Cursor settings are configured correctly for Cloud Agents:
+---
 
-1. Open Cursor Settings → **Integration** tab
+### Step 1: Prepare Your Cursor Account
+
+Cloud Agents require specific settings to function. Configure these **before** generating your API token:
+
+1. Open **Cursor** → **Settings** → **Integration** tab
 2. Configure the following:
-   - **Private Mode**: Must NOT be set to "legacy" (use "normal")
-   - **On-demand Usage**: Turn this ON
-   - **GitHub Connection**: Connect your GitHub account to Cursor
 
-These settings are required for Cloud Agents to function properly.
+| Setting | Required Value | Why |
+|---------|----------------|-----|
+| **Private Mode** | Normal (not "legacy") | Legacy mode blocks Cloud Agents |
+| **On-demand Usage** | ✅ Enabled | Required for API usage billing |
+| **GitHub Connection** | ✅ Connected | Agents need repo access |
 
-### Setup Time
+---
 
-⏱️ **~10 minutes** from zero to working bot
+### Step 2: Get Your API Keys
 
-### Step 1: Get API Keys
+You'll need **4 keys** total: 1 from Cursor, 3 from Discord.
 
-1. **Cursor API Token**
-   - Go to [cursor.com/dashboard?tab=integrations](https://cursor.com/dashboard?tab=integrations)
-   - Click "Generate New API Token"
-   - Copy and save it securely
-   - ⚠️ Keep secret - it has full access to your Cursor account
+#### Cursor API Token
 
-2. **Discord Application**
-   - Visit [Discord Developer Portal](https://discord.com/developers/applications)
-   - Click "New Application" → Name it (e.g., "Cursor Agent Bot")
-   - **General Information** tab: Copy **Application ID** and **Public Key**
-   - **Bot** tab: 
-     - Click "Add Bot" → Copy **Bot Token**
-     - ⚠️ Bot token is shown only once!
-   - **To make bot private** (optional):
-     - First: **Installation** tab → Uncheck "Install Link"
-     - Then: **Bot** tab → Turn off "Public Bot"
-     - 💡 Private bots can only be added to servers you manage
+1. Go to [cursor.com/dashboard?tab=integrations](https://cursor.com/dashboard?tab=integrations)
+2. Click **"Generate New API Token"**
+3. Copy and save it somewhere secure
 
-### Step 2: Deploy to Vercel
+> ⚠️ **Keep this secret!** It has full access to your Cursor account.
 
-Click the "Deploy with Vercel" button above, then:
+#### Discord Application
 
-1. Sign in with GitHub
-2. Fork this repository
-3. Enter your API keys as environment variables:
-   - `CURSOR_API_TOKEN`
+1. Go to [Discord Developer Portal](https://discord.com/developers/applications)
+2. Click **"New Application"** → Name it (e.g., "Cursor Agent Bot")
+3. Collect these values:
+
+| Where to Find | What to Copy | Environment Variable |
+|---------------|--------------|---------------------|
+| General Information | Application ID | `DISCORD_APPLICATION_ID` |
+| General Information | Public Key | `DISCORD_PUBLIC_KEY` |
+| Bot → Reset Token | Bot Token | `DISCORD_BOT_TOKEN` |
+
+> ⚠️ **Bot token is shown only once!** Copy it immediately after creation.
+
+#### Optional: Make Bot Private
+
+To prevent others from adding your bot to their servers:
+
+1. **Installation** tab → Uncheck "Install Link"
+2. **Bot** tab → Disable "Public Bot"
+
+---
+
+### Step 3: Deploy to Vercel
+
+1. Click the **"Deploy with Vercel"** button at the top of this README
+2. Sign in with GitHub and fork this repository
+3. Enter your 4 environment variables:
    - `DISCORD_APPLICATION_ID`
-   - `DISCORD_BOT_TOKEN`
    - `DISCORD_PUBLIC_KEY`
-4. Click "Deploy"
+   - `DISCORD_BOT_TOKEN`
+   - `CURSOR_API_TOKEN`
+4. Click **Deploy**
 5. Copy your deployment URL (e.g., `https://your-bot.vercel.app`)
 
-### Step 3: Configure Discord Interactions
+---
 
-1. Go back to Discord Developer Portal → Your App → **General Information**
-2. Set **Interactions Endpoint URL**:
-   ```
-   https://your-bot.vercel.app/api/discord
-   ```
-3. Click "Save Changes"
-4. ✅ Discord will verify with a green checkmark
-   - ❌ If error: check URL is correct (with api/discord endpoint) and Vercel deployment succeeded
+### Step 4: Configure Discord Interactions
 
-### Step 4: Register Commands
+Tell Discord where to send command requests:
 
-Commands must be registered once with Discord (runs locally):
+1. Go to [Discord Developer Portal](https://discord.com/developers/applications) → Your App
+2. **General Information** tab → **Interactions Endpoint URL**
+3. Enter: `https://your-bot.vercel.app/api/discord`
+4. Click **Save Changes**
+
+- ✅ **Success:** Discord shows a green checkmark
+- ❌ **Error:** Check your URL and verify Vercel deployment succeeded
+
+---
+
+### Step 5: Register Commands
+
+Commands must be registered once with Discord. This runs locally:
 
 ```bash
 # Clone your forked repository
@@ -97,202 +152,317 @@ cd cursor-discord-bot
 # Install dependencies
 npm install
 
-# Create .env.local with Discord credentials only
-cp .env.local.example .env.local
+```
 
-# Register commands
+Create a `.env.local` file with your Discord credentials:
+
+```
+DISCORD_APPLICATION_ID=your_application_id
+DISCORD_BOT_TOKEN=your_bot_token
+```
+
+> 💡 You only need these 2 variables for registration. The others are only used in Vercel.
+
+Register the commands:
+
+```bash
 npm run register-commands
 ```
-⚠️ This command is for Discord. Only `DISCORD_APPLICATION_ID` and `DISCORD_BOT_TOKEN` from .env.local are passed for registration. Other env vars (`DISCORD_PUBLIC_KEY`, `CURSOR_API_TOKEN`) are only used in Vercel.
 
 **Expected output:**
+
 ```
 ✅ Successfully registered commands:
-   - /agent (ID: 987654321...)
+   - /agent (ID: 123456789...)
 ```
 
+---
 
-### Step 5: Invite Bot to Server
+### Step 6: Invite the Bot
 
 1. Discord Developer Portal → **OAuth2** → **URL Generator**
-2. Select scopes: `bot`, `applications.commands`
-3. Select permissions: `Send Messages`, `Embed Links`, `Read Message History`
-4. Copy and open the generated URL
+2. Select scopes:
+   - ✅ `bot`
+   - ✅ `applications.commands`
+3. Select bot permissions:
+   - ✅ Send Messages
+   - ✅ Embed Links
+   - ✅ Read Message History
+4. Copy the generated URL and open it
 5. Select your server and authorize
 
-### Step 6: Configure Permissions (Optional)
+---
 
-By default, commands require "Manage Server" permission. To customize:
+### Step 7: Test It Out
 
-1. Discord Server → **Server Settings** → **Integrations**
-2. Click your bot name
-3. Configure per command:
-   - **Roles**: Which roles can use it
-   - **Channels**: Restrict to specific channels
-   - **Users**: Grant to specific users
-4. Changes apply instantly
+In your Discord server, type:
 
-💡 Commands won't appear in slash menu for unauthorized users.
-
-### Step 7: Test
-
-In Discord, type:
 ```
 /agent models
 ```
 
-You should see a list of available AI models! 🎉
+🎉 **You should see a list of available AI models!**
 
-## Available Commands
+---
 
-All commands are under `/agent`:
+## Usage
 
-| Command | Description |
-|---------|-------------|
-| `/agent create` | Launch a new agent with a prompt |
-| `/agent list` | List all your agents |
-| `/agent status <agent_id>` | View agent status and details |
-| `/agent conversation <agent_id>` | View conversation history |
-| `/agent followup <agent_id>` | Add follow-up instruction |
-| `/agent stop <agent_id>` | Stop a running agent |
-| `/agent delete <agent_id>` | Permanently delete an agent |
-| `/agent models` | List available AI models |
-| `/agent repos` | List accessible GitHub repos |
-| `/agent apikey` | View API key information |
+### Command Reference
 
-## Channel Context Support
+All commands are grouped under `/agent`:
 
-The bot automatically includes context from Discord messages when you reply to a message and use a command. This helps agents understand the full conversation context.
+| Command | Description | Required Parameters |
+|---------|-------------|---------------------|
+| `/agent create` | Launch a new agent | `prompt`, `repository` |
+| `/agent list` | List all your agents | - |
+| `/agent status` | View agent details | `agent_id` |
+| `/agent conversation` | View conversation history | `agent_id` |
+| `/agent followup` | Add follow-up instruction | `agent_id`, `prompt` |
+| `/agent stop` | Stop a running agent | `agent_id` |
+| `/agent delete` | Permanently delete an agent | `agent_id` |
+| `/agent models` | List available AI models | - |
+| `/agent repos` | List accessible GitHub repos | - |
+| `/agent apikey` | View API key information | - |
 
-### How to Use Context
+### Examples
 
-1. **Reply to a message** in your Discord channel (right-click → Reply, or hover and click reply icon)
-2. **Use `/agent create`** or `/agent followup` in your reply
-3. The bot will automatically include the referenced message as context
-
-### What Gets Included
-
-When you reply to a message, the agent receives:
-- The original message content
-- Author information
-- Any attachments (URLs and filenames)
-- Embed information
-
-### Example
+#### Create a New Agent
 
 ```
-User A: "The login button isn't working on mobile devices"
-      ↓
-User B: [Replies to User A's message]
-        /agent create prompt: "Fix the login button issue"
-        repository: https://github.com/org/repo
+/agent create prompt: Fix the login button bug repository: https://github.com/myorg/myrepo
 ```
 
-The agent will see:
+**Optional parameters:**
+- `model` - AI model to use (defaults to auto)
+- `ref` - Git branch to work from (defaults to main)
+- `branch_name` - Target branch for changes
+- `auto_create_pr` - Auto-create PR when done (default: false)
+
+#### Check Agent Status
+
+```
+/agent status agent_id: bc_abc123xyz
+```
+
+#### Add Follow-up Instructions
+
+```
+/agent followup agent_id: bc_abc123xyz prompt: Also add unit tests for the fix
+```
+
+#### View Conversation History
+
+```
+/agent conversation agent_id: bc_abc123xyz
+```
+
+---
+
+### Channel Context
+
+The bot can include context from Discord messages when you use commands as replies.
+
+#### How It Works
+
+1. **Reply to a message** in Discord (right-click → Reply)
+2. **Use a command** in your reply (e.g., `/agent create`)
+3. The bot automatically includes the referenced message as context
+
+#### Example Flow
+
+```
+Alice: "The login button isn't working on mobile devices"
+       ↓
+Bob: [Replies to Alice's message]
+     /agent create prompt: Fix this issue repository: https://github.com/org/repo
+```
+
+The agent sees:
+
 ```
 === CHANNEL CONTEXT ===
 
-Message from @UserA:
+Message from @Alice:
 The login button isn't working on mobile devices
 
 === USER TASK ===
 
-Fix the login button issue
+Fix this issue
 ```
 
-💡 **Tip:** This works for both `/agent create` and `/agent followup` commands!
+> 💡 This works with both `/agent create` and `/agent followup`!
+
+---
+
+### Permissions
+
+By default, commands require **Manage Server** permission.
+
+To customize who can use the bot:
+
+1. **Server Settings** → **Integrations**
+2. Click your bot name
+3. Configure per-command access:
+   - **Roles** - Which roles can use it
+   - **Channels** - Restrict to specific channels
+   - **Users** - Grant to specific users
+
+Commands won't appear in the slash menu for unauthorized users.
+
+---
+
+## Environment Variables
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `DISCORD_APPLICATION_ID` | ✅ | Your Discord application ID |
+| `DISCORD_PUBLIC_KEY` | ✅ | Your Discord public key (for signature verification) |
+| `DISCORD_BOT_TOKEN` | ✅ | Your Discord bot token |
+| `CURSOR_API_TOKEN` | ✅ | Your Cursor API token |
+
+- **Local development:** Create `.env.local` with all variables
+- **Vercel:** Set via Dashboard → Settings → Environment Variables
+
+---
+
+## Local Development
+
+```bash
+# Clone the repository
+git clone https://github.com/codeisalifestyle/cursor-discord-bot
+cd cursor-discord-bot
+
+# Install dependencies
+npm install
+
+# Create .env.local with all 4 environment variables
+# (DISCORD_APPLICATION_ID, DISCORD_PUBLIC_KEY, DISCORD_BOT_TOKEN, CURSOR_API_TOKEN)
+
+# Run development server
+npm run dev
+
+# Run tests
+npm test
+
+# Run linter
+npm run lint
+```
+
+**Available scripts:**
+
+| Script | Description |
+|--------|-------------|
+| `npm run dev` | Start development server |
+| `npm run build` | Build for production |
+| `npm run start` | Start production server |
+| `npm run lint` | Run ESLint |
+| `npm test` | Run tests |
+| `npm run test:watch` | Run tests in watch mode |
+| `npm run test:coverage` | Run tests with coverage |
+| `npm run register-commands` | Register Discord commands |
+
+---
 
 ## Architecture
 
-This is a **private, self-hosted** solution:
+This is a **self-hosted** solution where each deployment is independent:
 
-- Each Discord server admin deploys their own instance
-- Uses their own Cursor API token
-- Independent rate limits and quotas
-- Full control over data and configuration
-- **Privacy by default** - Homepage returns 404, search engines blocked
+```
+┌─────────────────┐      ┌─────────────────┐      ┌─────────────────┐
+│  Discord User   │ ───▶ │  Vercel Edge    │ ───▶ │   Cursor API    │
+│                 │ ◀─── │  (Your Bot)     │ ◀─── │                 │
+└─────────────────┘      └─────────────────┘      └─────────────────┘
+```
 
 **Tech Stack:**
-- Next.js 15 (App Router)
-- TypeScript
-- Discord Interactions API
-- Cursor Cloud Agents API
-- Vercel Serverless Functions
 
-**Privacy Features (Built-in):**
-- Homepage returns 404 (no information disclosure)
-- `robots.txt` blocks all search engine crawlers
-- Security headers prevent embedding, MIME sniffing, and info leaks
-- Only `/api/discord` endpoint is functional (protected by Discord signatures)
+- **Next.js 15** (App Router) - Framework
+- **TypeScript** - Type safety
+- **Discord Interactions API** - Command handling
+- **Cursor Cloud Agents API** - Agent management
+- **Vercel Serverless** - Hosting
 
-## Resources
+**Security Features:**
 
-- 🔧 [Cursor API Documentation](https://cursor.com/docs/cloud-agent/api/endpoints)
-- 🤖 [Discord Bot Guide](https://discord.com/developers/docs)
+- ✅ Discord Ed25519 signature verification
+- ✅ Role-based permission control
+- ✅ Environment variable secrets
+- ✅ Stateless (no data persistence)
+- ✅ 404 homepage (no info disclosure)
+- ✅ robots.txt blocks search engines
+- ✅ Security headers (no embedding, no MIME sniffing)
 
-## Security
-
-- **Discord Ed25519 signature verification** - Cryptographically secure authentication
-- **Discord native permission system** - Role-based access control
-- **Environment variable secrets** - No credentials in code
-- **No data persistence** - Stateless architecture
-- **Privacy by default** - 404 homepage, blocked search indexing
-- **Security headers** - Prevents embedding, MIME sniffing, and info leaks
+---
 
 ## Troubleshooting
 
 ### "Application did not respond"
+
 **Cause:** Vercel function timeout or crash
-- Check Vercel Dashboard → Your Project → Logs for errors
-- Verify all 4 environment variables are set in Vercel
-- Confirm endpoint URL: `https://your-project.vercel.app/api/discord`
+
+- Check Vercel Dashboard → Logs for errors
+- Verify all 4 environment variables are set
+- Confirm endpoint URL ends with `/api/discord`
 
 ### Commands not showing in Discord
-**Cause:** Not registered or missing permissions
-- Re-run: `npm run register-commands`
+
+**Cause:** Commands not registered or missing permissions
+
+- Re-run `npm run register-commands`
 - Verify bot has `applications.commands` scope
-- Try removing and re-inviting bot with correct OAuth2 scopes
+- Try removing and re-inviting the bot
 
 ### 401 Unauthorized errors
+
 **Cause:** Invalid Discord Public Key
-- Verify `DISCORD_PUBLIC_KEY` in Vercel matches Discord Portal exactly
-- No extra spaces or characters
+
+- Verify `DISCORD_PUBLIC_KEY` matches exactly (no extra spaces)
 - Redeploy after fixing
 
 ### 404 Agent not found
-- Run `/agent list` to verify agent IDs
+
+- Run `/agent list` to see valid agent IDs
 - Agent IDs start with `bc_` (e.g., `bc_abc123`)
 
 ### Rate limit errors (429)
-- `/agent repos`: Limited to 1/min, 30/hour - wait before retry
-- Other commands: Retry after short delay
 
-### Environment variables not loading
-**Local:** Create `.env.local` from `.env.local.example`
-**Vercel:** Set via Dashboard → Settings → Environment Variables
+- `/agent repos` is limited to 1/min, 30/hour
+- Wait and retry after the limit resets
 
 ### Cursor API errors
-Check preparation steps above. No available requests or funds in your Cursor account, enable on-demand usage in Cursor settings.
 
-## Contributing
+- Ensure **On-demand Usage** is enabled in Cursor Settings
+- Check you have available credits/requests
 
-This is an open-source project. Contributions welcome!
+---
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
+## Resources
 
-## License
-
-MIT License - see [LICENSE](LICENSE) for details
-
-## Support
-
+- 📖 [Cursor API Documentation](https://cursor.com/docs/cloud-agent/api/endpoints)
+- 🤖 [Discord Developer Documentation](https://discord.com/developers/docs)
 - 🐛 [Report Issues](https://github.com/codeisalifestyle/cursor-discord-bot/issues)
 - 💬 [Discussions](https://github.com/codeisalifestyle/cursor-discord-bot/discussions)
 
 ---
 
-**Built for the Cursor community** 🚀
+## Contributing
 
+Contributions are welcome! Here's how:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Make your changes
+4. Run tests (`npm test`)
+5. Submit a pull request
+
+---
+
+## License
+
+MIT License - see [LICENSE](LICENSE) for details.
+
+---
+
+<p align="center">
+  <strong>Built for the Cursor community</strong> 🚀
+</p>

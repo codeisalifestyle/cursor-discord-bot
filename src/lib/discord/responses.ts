@@ -1,4 +1,5 @@
 import type { Agent, ConversationMessage, Repository } from '../cursor/types';
+import { sanitizeError } from '../errors';
 
 const MAX_MESSAGE_LENGTH = 2000;
 const MAX_EMBED_DESCRIPTION_LENGTH = 4096;
@@ -158,9 +159,9 @@ export function formatApiKeyInfo(info: { apiKeyName: string; createdAt: string; 
 }
 
 export function formatError(error: unknown): string {
-  const message = error instanceof Error ? error.message : 'Unknown error occurred';
+  const message = sanitizeError(error);
 
-  return `❌ **Error**\n\n\`\`\`\n${truncate(message, 1900)}\n\`\`\``;
+  return `❌ **Error**\n\n${truncate(message, 1950)}`;
 }
 
 export function formatSuccess(message: string): string {

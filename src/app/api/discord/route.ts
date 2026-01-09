@@ -16,39 +16,50 @@ import {
   buildPromptWithContext,
   extractReferencedMessage,
 } from '@/src/lib/discord/context';
+import type {
+  DiscordInteraction,
+  DiscordCommandOption,
+  OptionValue,
+} from '@/src/lib/discord/types';
+import {
+  validateAgentId,
+  validateLimit,
+  validatePrompt,
+  validateRepository,
+  validateBranchName,
+} from '@/src/lib/validation';
 
-interface DiscordInteraction {
-  type: number;
-  channel_id?: string;
-  message?: {
-    id: string;
-    content?: string;
-    referenced_message?: any;
-  };
-  data?: {
-    name: string;
-    options?: Array<{
-      name: string;
-      type: number;
-      value?: string | number | boolean;
-      options?: Array<{
-        name: string;
-        value: string | number | boolean;
-      }>;
-    }>;
-  };
-}
-
-function getOptionValue(options: any[] | undefined, name: string): any {
+function getOptionValue(
+  options: DiscordCommandOption[] | undefined,
+  name: string
+): OptionValue {
   if (!options) return undefined;
   const option = options.find((opt) => opt.name === name);
   return option?.value;
 }
 
-function getSubcommandOptions(options: any[] | undefined): any[] | undefined {
-  if (!options) return undefined;
-  const subcommand = options[0];
-  return subcommand?.options;
+function getStringOption(
+  options: DiscordCommandOption[] | undefined,
+  name: string
+): string | undefined {
+  const value = getOptionValue(options, name);
+  return typeof value === 'string' ? value : undefined;
+}
+
+function getNumberOption(
+  options: DiscordCommandOption[] | undefined,
+  name: string
+): number | undefined {
+  const value = getOptionValue(options, name);
+  return typeof value === 'number' ? value : undefined;
+}
+
+function getBooleanOption(
+  options: DiscordCommandOption[] | undefined,
+  name: string
+): boolean | undefined {
+  const value = getOptionValue(options, name);
+  return typeof value === 'boolean' ? value : undefined;
 }
 
 export async function POST(req: NextRequest) {
@@ -100,12 +111,12 @@ export async function POST(req: NextRequest) {
         // Route to appropriate handler
         switch (subcommand) {
           case 'create': {
-            const prompt = getOptionValue(options, 'prompt');
-            const repository = getOptionValue(options, 'repository');
-            const model = getOptionValue(options, 'model');
-            const ref = getOptionValue(options, 'ref');
-            const branchName = getOptionValue(options, 'branch_name');
-            const autoCreatePr = getOptionValue(options, 'auto_create_pr');
+            const prompt = validatePrompt(getStringOption(options, 'prompt'));
+            const repository = validateRepository(getStringOption(options, 'repository'));
+            const model = getStringOption(options, 'model');
+            const ref = getStringOption(options, 'ref');
+            const branchName = validateBranchName(getStringOption(options, 'branch_name'));
+            const autoCreatePr = getBooleanOption(options, 'auto_create_pr');
 
             // Extract referenced message if user replied to a message
             const referencedMessage = extractReferencedMessage(interaction);
@@ -141,7 +152,7 @@ export async function POST(req: NextRequest) {
           }
 
           case 'list': {
-            const limit = getOptionValue(options, 'limit') || 10;
+            const limit = validateLimit(getNumberOption(options, 'limit'));
             const result = await cursorApi.listAgents(limit);
 
             return NextResponse.json({
@@ -153,7 +164,7 @@ export async function POST(req: NextRequest) {
           }
 
           case 'status': {
-            const agentId = getOptionValue(options, 'agent_id');
+            const agentId = validateAgentId(getStringOption(options, 'agent_id'));
             const agent = await cursorApi.getAgentStatus(agentId);
 
             return NextResponse.json({
@@ -163,7 +174,7 @@ export async function POST(req: NextRequest) {
           }
 
           case 'conversation': {
-            const agentId = getOptionValue(options, 'agent_id');
+            const agentId = validateAgentId(getStringOption(options, 'agent_id'));
             const conversation = await cursorApi.getAgentConversation(agentId);
 
             return NextResponse.json({
@@ -175,8 +186,8 @@ export async function POST(req: NextRequest) {
           }
 
           case 'followup': {
-            const agentId = getOptionValue(options, 'agent_id');
-            const prompt = getOptionValue(options, 'prompt');
+            const agentId = validateAgentId(getStringOption(options, 'agent_id'));
+            const prompt = validatePrompt(getStringOption(options, 'prompt'));
 
             // Extract referenced message if user replied to a message
             const referencedMessage = extractReferencedMessage(interaction);
@@ -204,7 +215,7 @@ export async function POST(req: NextRequest) {
           }
 
           case 'stop': {
-            const agentId = getOptionValue(options, 'agent_id');
+            const agentId = validateAgentId(getStringOption(options, 'agent_id'));
             await cursorApi.stopAgent(agentId);
 
             return NextResponse.json({
@@ -216,7 +227,7 @@ export async function POST(req: NextRequest) {
           }
 
           case 'delete': {
-            const agentId = getOptionValue(options, 'agent_id');
+            const agentId = validateAgentId(getStringOption(options, 'agent_id'));
             await cursorApi.deleteAgent(agentId);
 
             return NextResponse.json({
@@ -259,6 +270,7 @@ export async function POST(req: NextRequest) {
               type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
               data: {
                 content: formatApiKeyInfo(info),
+                flags: 64, // EPHEMERAL - only visible to the user who invoked the command
               },
             });
           }

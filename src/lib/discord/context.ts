@@ -1,29 +1,9 @@
 // Discord context building utilities
 
-interface DiscordUser {
-  id: string;
-  username: string;
-  discriminator?: string;
-  global_name?: string;
-  bot?: boolean;
-}
-
-interface DiscordAttachment {
-  id: string;
-  filename: string;
-  url: string;
-  content_type?: string;
-  size: number;
-}
-
-interface ReferencedMessage {
-  id: string;
-  content: string;
-  author: DiscordUser;
-  timestamp: string;
-  attachments?: DiscordAttachment[];
-  embeds?: any[];
-}
+import type {
+  DiscordInteraction,
+  ReferencedMessage,
+} from './types';
 
 /**
  * Builds a prompt with context from a referenced Discord message
@@ -86,11 +66,13 @@ export function buildPromptWithContext(
  * @param interaction - The Discord interaction object
  * @returns The referenced message if present
  */
-export function extractReferencedMessage(interaction: any): ReferencedMessage | undefined {
+export function extractReferencedMessage(
+  interaction: DiscordInteraction
+): ReferencedMessage | undefined {
   // Check for message reference in the interaction
   // This happens when a user replies to a message and then uses a slash command
   const referencedMessage = interaction.message?.referenced_message;
-  
+
   if (!referencedMessage) {
     return undefined;
   }
