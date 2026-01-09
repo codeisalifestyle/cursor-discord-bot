@@ -46,9 +46,38 @@ export interface DiscordCommandOption {
   options?: DiscordCommandOption[];
 }
 
+// Resolved data for context menu commands
+export interface DiscordResolvedData {
+  messages?: Record<string, DiscordMessage>;
+  users?: Record<string, DiscordUser>;
+}
+
+// Modal text input component
+export interface DiscordModalComponent {
+  type: number; // 4 = text input
+  custom_id: string;
+  style?: number; // 1 = short, 2 = paragraph
+  label: string;
+  min_length?: number;
+  max_length?: number;
+  required?: boolean;
+  value?: string;
+  placeholder?: string;
+}
+
+// Action row containing components
+export interface DiscordActionRow {
+  type: 1; // Action row
+  components: DiscordModalComponent[];
+}
+
 export interface DiscordInteractionData {
-  name: string;
+  name?: string;
+  custom_id?: string; // For modals
   options?: DiscordCommandOption[];
+  target_id?: string; // For context menu commands
+  resolved?: DiscordResolvedData;
+  components?: DiscordActionRow[]; // For modal submissions
 }
 
 export interface DiscordInteraction {

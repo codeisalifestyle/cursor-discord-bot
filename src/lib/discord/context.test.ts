@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { buildPromptWithContext, extractReferencedMessage } from './context';
+import { buildPromptWithContext, extractReferencedMessage, extractTargetMessage } from './context';
 import type { DiscordInteraction, ReferencedMessage } from './types';
 
 describe('buildPromptWithContext', () => {
@@ -183,5 +183,146 @@ describe('extractReferencedMessage', () => {
 
     const result = extractReferencedMessage(interaction);
     expect(result?.content).toBe('');
+  });
+});
+
+describe('extractTargetMessage', () => {
+  it('should return undefined when no target_id', () => {
+    const interaction: DiscordInteraction = {
+      type: 2,
+      data: { name: 'Ask Agent' },
+    };
+
+    expect(extractTargetMessage(interaction)).toBeUndefined();
+  });
+
+  it('should return undefined when no resolved messages', () => {
+    const interaction: DiscordInteraction = {
+      type: 2,
+      data: {
+        name: 'Ask Agent',
+        target_id: '123',
+      },
+    };
+
+    expect(extractTargetMessage(interaction)).toBeUndefined();
+  });
+
+  it('should return undefined when target message not in resolved', () => {
+    const interaction: DiscordInteraction = {
+      type: 2,
+      data: {
+        name: 'Ask Agent',
+        target_id: '123',
+        resolved: {
+          messages: {
+            '999': {
+              id: '999',
+              content: 'Different message',
+              author: { id: '456', username: 'test' },
+              timestamp: '2024-01-01T00:00:00Z',
+            },
+          },
+        },
+      },
+    };
+
+    expect(extractTargetMessage(interaction)).toBeUndefined();
+  });
+
+  it('should extract target message from context menu interaction', () => {
+    const interaction: DiscordInteraction = {
+      type: 2,
+      data: {
+        name: 'Ask Agent',
+        target_id: '123',
+        resolved: {
+          messages: {
+            '123': {
+              id: '123',
+              content: 'This is the bug report from the user',
+              author: {
+                id: '456',
+                username: 'reporter',
+                global_name: 'Bug Reporter',
+                bot: false,
+              },
+              timestamp: '2024-01-01T00:00:00Z',
+              attachments: [],
+              embeds: [],
+            },
+          },
+        },
+      },
+    };
+
+    const result = extractTargetMessage(interaction);
+
+    expect(result).toBeDefined();
+    expect(result?.id).toBe('123');
+    expect(result?.content).toBe('This is the bug report from the user');
+    expect(result?.author.username).toBe('reporter');
+    expect(result?.author.global_name).toBe('Bug Reporter');
+  });
+
+  it('should include attachments from target message', () => {
+    const interaction: DiscordInteraction = {
+      type: 2,
+      data: {
+        name: 'Ask Agent',
+        target_id: '123',
+        resolved: {
+          messages: {
+            '123': {
+              id: '123',
+              content: 'See attached screenshot',
+              author: { id: '456', username: 'user' },
+              timestamp: '2024-01-01T00:00:00Z',
+              attachments: [
+                {
+                  id: 'att1',
+                  filename: 'error.png',
+                  url: 'https://cdn.discord.com/attachments/123/error.png',
+                  content_type: 'image/png',
+                  size: 2048,
+                },
+              ],
+            },
+          },
+        },
+      },
+    };
+
+    const result = extractTargetMessage(interaction);
+
+    expect(result?.attachments).toHaveLength(1);
+    expect(result?.attachments?.[0].filename).toBe('error.png');
+  });
+
+  it('should handle bot messages', () => {
+    const interaction: DiscordInteraction = {
+      type: 2,
+      data: {
+        name: 'Ask Agent',
+        target_id: '123',
+        resolved: {
+          messages: {
+            '123': {
+              id: '123',
+              content: 'Automated response',
+              author: {
+                id: '456',
+                username: 'bot-user',
+                bot: true,
+              },
+              timestamp: '2024-01-01T00:00:00Z',
+            },
+          },
+        },
+      },
+    };
+
+    const result = extractTargetMessage(interaction);
+    expect(result?.author.bot).toBe(true);
   });
 });

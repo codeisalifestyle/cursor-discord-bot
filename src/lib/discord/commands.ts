@@ -190,5 +190,13 @@ export const agentCommand: ApplicationCommand = {
   ],
 };
 
-export const commands: ApplicationCommand[] = [agentCommand];
+// Message context menu command - right-click a message to ask an agent about it
+export const askAgentCommand: ApplicationCommand = {
+  name: 'Ask Agent',
+  description: '', // Context menu commands don't use descriptions
+  type: ApplicationCommandType.MESSAGE,
+  default_member_permissions: MANAGE_SERVER_PERMISSION,
+};
+
+export const commands: ApplicationCommand[] = [agentCommand, askAgentCommand];
 

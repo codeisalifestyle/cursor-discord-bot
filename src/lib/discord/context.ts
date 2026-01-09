@@ -93,3 +93,38 @@ export function extractReferencedMessage(
   };
 }
 
+
+/**
+ * Extracts target message from a message context menu interaction
+ * @param interaction - The Discord interaction object from a context menu command
+ * @returns The target message if present
+ */
+export function extractTargetMessage(
+  interaction: DiscordInteraction
+): ReferencedMessage | undefined {
+  // For message context menu commands, the target message is in resolved.messages
+  const targetId = interaction.data?.target_id;
+  if (!targetId) {
+    return undefined;
+  }
+
+  const targetMessage = interaction.data?.resolved?.messages?.[targetId];
+  if (!targetMessage) {
+    return undefined;
+  }
+
+  return {
+    id: targetMessage.id,
+    content: targetMessage.content || '',
+    author: {
+      id: targetMessage.author.id,
+      username: targetMessage.author.username,
+      discriminator: targetMessage.author.discriminator,
+      global_name: targetMessage.author.global_name,
+      bot: targetMessage.author.bot,
+    },
+    timestamp: targetMessage.timestamp,
+    attachments: targetMessage.attachments,
+    embeds: targetMessage.embeds,
+  };
+}
