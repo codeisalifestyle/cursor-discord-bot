@@ -44,7 +44,7 @@ class CursorApiClient {
     if (error instanceof AppError) {
       const status = error.statusCode;
       // Retry on rate limit (429) or server errors (5xx)
-      return status === 429 || (status >= 500 && status < 600);
+      return status !== undefined && (status === 429 || (status >= 500 && status < 600));
     }
     // Retry on network/fetch errors
     if (error instanceof TypeError && error.message.includes('fetch')) {
