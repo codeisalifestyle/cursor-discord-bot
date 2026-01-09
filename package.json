@@ -9,9 +9,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
+    "type-check": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
+    "verify": "npm run type-check && npm run lint && npm run test && npm run build",
     "register-commands": "tsx src/scripts/register-commands.ts"
   },
   "dependencies": {
