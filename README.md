@@ -4,6 +4,10 @@ A self-hostable Discord bot for managing **Cursor Cloud Agents** directly from D
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fcodeisalifestyle%2Fcursor-discord-bot&env=DISCORD_PUBLIC_KEY,DISCORD_APPLICATION_ID,DISCORD_BOT_TOKEN,CURSOR_API_TOKEN&envDescription=Required%20API%20keys%20for%20Discord%20and%20Cursor&envLink=https%3A%2F%2Fgithub.com%2Fcodeisalifestyle%2Fcursor-discord-bot%23environment-variables&project-name=cursor-discord-bot&repository-name=cursor-discord-bot)
 
+<p align="center">
+  <img src="docs/images/demo.jpeg" alt="Discord bot demo showing agent commands and interactions" width="600">
+</p>
+
 ---
 
 ## Features
