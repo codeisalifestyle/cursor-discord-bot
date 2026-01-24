@@ -40,7 +40,7 @@ jobs:
             echo "Found $UPSTREAM_COMMITS new commits from upstream"
             
             # Merge upstream changes
-            git merge upstream/main --no-edit
+            git merge upstream/main --no-edit --allow-unrelated-histories
             
             # Push to fork
             git push origin main
